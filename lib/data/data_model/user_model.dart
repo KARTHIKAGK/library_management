@@ -1,39 +1,57 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 
-class UserModel{
-  String? name;
+part 'user_model.g.dart';
+
+@HiveType(typeId: 0)
+class UserModel {
+  @HiveField(0)
   String? email;
-  bool? emailVerified;
+  @HiveField(1)
   String? phoneNumber;
+  @HiveField(2)
+  String? uid;
+  @HiveField(3)
   String? userType;
-  String? address;
+  @HiveField(4)
+  String? name;
+
+
+
 
   UserModel({
-    this.name,
     this.email,
-    this.emailVerified,
     this.phoneNumber,
+    this.uid,
     this.userType,
-    this.address,
-  });
+    this.name,
+    });
 
-  factory UserModel.fromJson({required Map<String, dynamic> data, required User user})
-  {
-    return UserModel(
-      name: user.displayName,
-      email:user.email,
-      emailVerified: user.emailVerified,
-      phoneNumber: user.phoneNumber,
-      userType: (data["userType"] is String) ? data["userType"] :"",
-      address: (data["address"] is String) ? data["address"] :"" );
+  factory UserModel.fromJson({required Map<String, dynamic> data, required User user}) {
+    try{
+      return UserModel(
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        uid: user.uid,
+        userType: (data["userType"] is String) ? data["userType"] : "",
+        name: (data["name"] is String) ? data["name"] : "",
+     
+      );
+    }catch(error){
+      if (kDebugMode) {
+        print(error);
+      }
+      throw FormatException('Invalid JSON: $data');
+    }
   }
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
-      'fullName':name,
-      'email':email,
-      'phoneNumber' :phoneNumber,
-      'address' :address,
-    };
+      'userType': userType,
+      'name': name,
+      'phoneNumbers': phoneNumber,
+     };
   }
 }
